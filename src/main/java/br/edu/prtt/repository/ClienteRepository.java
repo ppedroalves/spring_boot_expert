@@ -2,61 +2,24 @@ package br.edu.prtt.repository;
 
 
 import br.edu.prtt.domain.entidades.Cliente;
-import ch.qos.logback.core.net.server.Client;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.transaction.Transactional;
 import java.util.List;
 
-@Repository
-public class ClienteRepository  {
+
+public interface ClienteRepository extends JpaRepository<Cliente, Integer>  {
 
 
-    private static String INSERT = "insert into cliente (nome) values (?)";
+    @Query(value = "select c from Cliente c where c.nome like :nome" )
+    List<Cliente> encontrarPorNome( @Param( "nome") String nome);
 
-    private static String SELECT_ALL = "select * from cliente";
+    void deleteByNome(String nome);
 
-    private static String UPDATE = "update cliente set nome = ?  where id = ?";
+    boolean existsByNome(String nome);
 
-    private static String DELETE = "delete from cliente where id = ?";
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    List<Cliente> findByNomeOrId(String nome, Integer id);
 
-    public Cliente salvar(Cliente cliente){
-        jdbcTemplate.update(INSERT, new Object[]{cliente.getNome()});
-        return cliente;
-    }
-
-    public Cliente atualizar(Cliente cliente){
-        jdbcTemplate.update(UPDATE, new Object[]{cliente.getNome() , cliente.getId()});
-        return cliente;
-    }
-
-    public void deletar(Cliente cliente){
-        jdbcTemplate.update(DELETE, new Object[]{cliente.getId()});
-    }
-
-    public List<Cliente> buscarPorNome(String nome){
-        return jdbcTemplate.query(SELECT_ALL.concat(" where nome like ? "), new Object[]{"%" + nome + "%"}, obterClienteMapper());
-    }
-
-    public List<Cliente> obterTodos(){
-        return jdbcTemplate.query(SELECT_ALL, obterClienteMapper());
-    }
-
-    private RowMapper<Cliente> obterClienteMapper(){
-        return new RowMapper<Cliente>() {
-            @Override
-            public Cliente mapRow(ResultSet resultSet, int i) throws SQLException {
-                Integer id = resultSet.getInt("id");
-                String nome = resultSet.getString("nome");
-                return new Cliente(id, nome);
-            }
-        };
-    }
 }

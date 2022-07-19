@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @SpringBootApplication
 @RestController
 public class App
@@ -19,29 +21,36 @@ public class App
         return args -> {
             Cliente cliente = new Cliente();
             cliente.setNome("Prtt");
-            clienteRepository.salvar(cliente);
+            clienteRepository.save(cliente);
 
             Cliente cliente2 = new Cliente("outro cliente");
-            clienteRepository.salvar(cliente2);
+            clienteRepository.save(cliente2);
 
 
-            clienteRepository.obterTodos().stream()
+            clienteRepository.findAll().stream()
                     .forEach(System.out::println);
 
-            clienteRepository.obterTodos().stream()
+            clienteRepository.findAll().stream()
                     .forEach(c -> {
                         c.setNome(c.getNome() + " atualizado");
-                        clienteRepository.atualizar(c);
+                        clienteRepository.save(c);
                     });
 
-            clienteRepository.obterTodos().stream()
+            List<Cliente> clienteList = clienteRepository.encontrarPorNome("P");
+
+
+            System.out.println("Buscando um cliente: ");
+            clienteList.stream()
                     .forEach(System.out::println);
 
-            clienteRepository.obterTodos().stream()
-                    .forEach(c -> clienteRepository.deletar(c));
+            //clienteRepository.findAll().stream()
+                    //.forEach(System.out::println);
+
+            clienteRepository.findAll().stream()
+                    .forEach(c -> clienteRepository.delete(c));
 
             System.out.println("CLIENTES DEPOIS DE DELETAR: ");
-            clienteRepository.obterTodos().stream()
+            clienteRepository.findAll().stream()
                     .forEach(System.out::println);
 
 
