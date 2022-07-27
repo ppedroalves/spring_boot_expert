@@ -6,7 +6,5 @@ public class RegraNegocioException extends RuntimeException{
         super(message);
     }
 
-    public void test(){
 
-    }
 }

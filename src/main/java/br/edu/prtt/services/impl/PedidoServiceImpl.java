@@ -7,6 +7,8 @@ import br.edu.prtt.domain.entidades.Pedido;
 import br.edu.prtt.domain.entidades.Produto;
 import br.edu.prtt.domain.entidades.dto.ItemPedidoDTO;
 import br.edu.prtt.domain.entidades.dto.PedidoDTO;
+import br.edu.prtt.domain.entidades.enums.StatusPedido;
+import br.edu.prtt.exception.PedidoNotFoundException;
 import br.edu.prtt.exception.RegraNegocioException;
 import br.edu.prtt.repository.ClienteRepository;
 import br.edu.prtt.repository.ItemPedidoRepository;
@@ -48,6 +50,7 @@ public class PedidoServiceImpl  implements PedidoService {
         pedido.setTotal(dto.getTotal());
         pedido.setDataPedido(LocalDate.now());
         pedido.setCliente(cliente);
+        pedido.setStatus(StatusPedido.REALIZADO);
        List<ItemPedido> items = converterItems(pedido, dto.getItems());
        pedidoRepository.save(pedido);
        itemPedidoRepository.saveAll(items);
@@ -55,6 +58,24 @@ public class PedidoServiceImpl  implements PedidoService {
 
         return pedido;
     }
+
+    @Override
+    public Optional<Pedido> obterPedidoCompleto(Integer id) {
+        return pedidoRepository.findByIdFetchItens(id);
+    }
+
+    @Override
+    @Transactional
+    public void atualizarPedido(Integer id, StatusPedido status) {
+        pedidoRepository.findById(id)
+                .map(p ->  {
+                    p.setStatus(status);
+                    return pedidoRepository.save(p);
+                })
+                .orElseThrow(PedidoNotFoundException::new);
+    }
+
+
 
     private List<ItemPedido> converterItems(Pedido pedido, List<ItemPedidoDTO> items){
         if(items.isEmpty()){

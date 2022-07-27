@@ -1,5 +1,7 @@
 package br.edu.prtt.domain.entidades;
 
+import br.edu.prtt.domain.entidades.enums.StatusPedido;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,6 +31,10 @@ public class Pedido {
 
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itens;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private StatusPedido status;
 
     public Integer getId() {
         return id;
@@ -68,6 +74,14 @@ public class Pedido {
 
     public void setItens(List<ItemPedido> itens) {
         this.itens = itens;
+    }
+
+    public StatusPedido getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusPedido status) {
+        this.status = status;
     }
 
     @Override
