@@ -1,6 +1,8 @@
 package br.edu.prtt.domain.entidades;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 
@@ -13,8 +15,10 @@ public class Produto {
     @Column(name="id")
     private Integer id;
     @Column(name="descricao")
+    @NotEmpty(message = "A descrição é obrigatoria")
     private String descricao;
     @Column(name="preco_unitario")
+    @NotNull(message = "O preço é obrigatorio")
     private BigDecimal preco;
 
     public Produto() {

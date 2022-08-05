@@ -4,6 +4,7 @@ package br.edu.prtt.domain.entidades;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.Set;
 
 
@@ -15,6 +16,9 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Integer id;
+
+
+    @NotEmpty(message = "{campo.nome.obrigatorio}")
     private String nome;
 
 
